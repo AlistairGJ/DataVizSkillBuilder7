@@ -1,0 +1,88 @@
+---
+title: "MATH2270 Module 7"
+author: "Alistair Grevis-James s3644119"
+subtitle: Skill Builder
+output:
+  html_document:
+    df_print: paged
+---
+
+#### Loading the Packages
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(vcd)
+library(GGally)
+library(googleVis)
+library(plotly)
+library(ggridges)
+```
+
+#### Data
+
+```{r}
+default <-read.csv("Default.csv")
+
+default$SEX <- factor(default$SEX, levels = c(1,2),
+                          labels = c("Male","Female")) 
+
+default$EDUCATION[default$EDUCATION == 0] <- 4
+default$EDUCATION[default$EDUCATION == 5] <- 4 
+default$EDUCATION[default$EDUCATION == 6] <- 4 
+
+default$EDUCATION <- factor(default$EDUCATION, levels = c(1,2,3,4),
+                          labels = c("Graduate","University","High school","Other"),
+                          ordered = TRUE) 
+
+default$MARRIAGE[default$MARRIAGE == 0] <- 3 
+
+default$MARRIAGE <- factor(default$MARRIAGE, levels = c(1,2,3),
+                          labels = c("Married","Single","Other")) 
+
+default$default <- factor(default$default, levels = c(0,1),
+                          labels = c("No","Yes"))
+
+default$PAY_0[default$PAY_0 == 0] <- 4
+
+default[7:12][default[7:12] == -2] <- 0
+default[7:12][default[7:12] == -1] <- 0
+
+default[7:12] <- lapply(default[7:12], factor, levels = c(0,1,2,3,4,5,6,7,8,9),
+                       labels = c("Pay Duly", "Delay 1M", "Delay 2M",
+                                  "Delay 3M", "Delay 4M", "Delay 5M",
+                                  "Delay 6M", "Delay 7M", "Delay 8M",
+                                  "Delay 9M"))
+```
+
+#### Exercise
+
+Design a multivariate data visualisation, using any method and combination of variables, that provides the most insight into the likelihood of a customer defaulting on a loan. Submit a knitted RMarkdown report to Canvas showing your code and visualisation. Submit your visualisation and code to the Slack site to share and receive feedback.
+
+```{r, include=FALSE}
+colnames(default)
+```
+
+```{r, include=FALSE}
+str(default)
+```
+
+
+```{r, include=FALSE, warning=FALSE}
+summary(default)
+```
+
+
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(data = default, aes(x=AGE, y = EDUCATION, fill = default)) + 
+  geom_density_ridges2(scale = 1.5, alpha=0.7, colour = 'white', size = 0.2) +
+  labs(y = "Education", x = "Age", 
+       title = "Faceted Density Plots on Loan Defaults, s3644119") +
+  theme(axis.text.y = element_text(vjust = 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  coord_cartesian(xlim = c(18, 68)) +  
+  scale_y_discrete(expand = c(0.01, 0)) + 
+  facet_grid(MARRIAGE~SEX) +
+  scale_fill_manual(values=c("#0076B8", "#D7611B"))
+```
