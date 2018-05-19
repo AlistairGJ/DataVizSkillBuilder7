@@ -22,7 +22,7 @@ library(ggridges)
 #### Data
 
 ```{r}
-default <-read.csv("Default.csv")
+default <- read.csv("Default.csv")
 
 default$SEX <- factor(default$SEX, levels = c(1,2),
                           labels = c("Male","Female")) 
